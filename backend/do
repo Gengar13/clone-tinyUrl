@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Function to start the PostgreSQL container
+start_db() {
+    echo "Starting PostgreSQL container..."
+
+    docker run -d \
+        -p 5432:5432 \
+        postgres:latest
+
+    # Check if the container started successfully
+    if [ $? -eq 0 ]; then
+        echo "PostgreSQL container started successfully."
+    else
+        echo "Error: Unable to start PostgreSQL container."
+    fi
+}
+run() {
+  ./gradlew build -x test
+
+}
+
+# Main script logic
+command="$1"
+
+# Replace hyphens with underscores in the command
+command_with_underscores="${command//-/_}"
+
+# Check if a function with the modified command exists
+if declare -f "$command_with_underscores" > /dev/null; then
+    # Call the function dynamically
+    "$command_with_underscores"
+else
+    echo "Error: Unknown command '$command'"
+    exit 1
+fi
